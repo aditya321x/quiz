@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>online quiz</title>
+  <link rel="icon" href="icon.avif">
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      width: 80%;
+      max-width: 600px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background-color: #6200ea;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3700b3;
+    }
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .category {
+      background-color: #272727;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .category img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .category:hover {
+      transform: scale(1.05);
+    }
+    .timer {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="main">
+    <h1>Enter Details</h1>
+    <input type="text" id="studentName" placeholder="Student Name">
+    <input type="text" id="schoolName" placeholder="School Name">
+    <button onclick="showCategories()">Next</button>
+  </div>
+
+  <script>
+    let studentName = "";
+    let schoolName = "";
+    let score = 0;
+    let currentQuestion = 0;
+    let timer;
+    let countdown;
+    let questions = [];
+
+    const quizData = {
+      'Invention & Scientists': [
+        { question: "Who invented the telephone?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who Developed the theory of relativity?", options: ['Isaac Newton', 'Albert Einstein', 'Galileo Galilei', 'Marie Curie'], answer: 'Albert Einstein' },
+        { question: "Who Developed alternating current (AC) electricity system ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Nikola Tesla' },
+        { question: "Who Developed the theory of relativity ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Albert Einstein' },
+        { question: "Who Discovered the law of gravity and formulated laws of motion ?", options: ['Isaac Newton', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Isaac Newton' },
+        { question: "Who Improved the telescope and supported heliocentric theory ?", options: ['Galileo Galilei', 'Isaac Newton', 'Nikola Tesla', 'Albert Einstein'], answer: 'Galileo Galilei' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+      ],
+      'Physics': [
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the speed of light?", options: ['3x10^8 m/s', '3x10^6 m/s', '1x10^8 m/s', '5x10^8 m/s'], answer: '3x10^8 m/s' }
+      ],
+      'Chemistry': [
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "Who is known as the father of modern chemistry?", options: ['Dmitri Mendeleev', 'Antoine Lavoisier', 'John Dalton', 'Marie Curie'], answer: 'Antoine Lavoisier' }
+      ],
+      'Computer Science': [
+        { question: "Who is the father of computers?", options: ['Charles Babbage', 'Alan Turing', 'Bill Gates', 'Steve Jobs'], answer: 'Charles Babbage' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' }
+      ]
+    };
+
+    function showCategories() {
+      studentName = document.getElementById('studentName').value;
+      schoolName = document.getElementById('schoolName').value;
+      if (!studentName || !schoolName) {
+        alert('Pls enter ur details');
+        return;
+      }
+      document.getElementById('main').innerHTML = `
+        <h1>Select Quiz Category</h1>
+        <div class="categories">
+          <div class="category" onclick="startQuiz('Invention & Scientists')">
+            <img src="apj.jpeg" alt="Invention & Scientists">
+            <p>Invention & Scientists</p>
+          </div>
+          <div class="category" onclick="startQuiz('Physics')">
+            <img src="physics 2.avif" alt="Physics">
+            <p>Physics</p>
+          </div>
+          <div class="category" onclick="startQuiz('Chemistry')">
+            <img src="chemistry 2.jpeg" alt="Chemistry">
+            <p>Chemistry</p>
+          </div>
+          <div class="category" onclick="startQuiz('Computer Science')">
+            <img src="computer 2.avif" alt="Computer Science">
+            <p>Computer Science</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function startQuiz(category) {
+      questions = quizData[category];
+      score = 0;
+      currentQuestion = 0;
+      startTimer();
+      showQuestion();
+    }
+
+    function startTimer() {
+      let timeLeft = 60;
+      countdown = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          showResult();
+        }
+      }, 1000);
+    }
+
+    function showQuestion() {
+      if (currentQuestion >= questions.length) {
+        showResult();
+        return;
+      }
+      let q = questions[currentQuestion];
+      document.getElementById('main').innerHTML = `
+        <div class="timer" id="timer">60</div>
+        <h2>${q.question}</h2>
+        ${q.options.map(option => `<button onclick="checkAnswer('${option}')">${option}</button>`).join('')}
+      `;
+    }
+
+    function checkAnswer(selected) {
+      if (selected === questions[currentQuestion].answer) {
+        score++;
+      }
+      currentQuestion++;
+      showQuestion();
+    }
+
+    function showResult() {
+      clearInterval(countdown);
+      document.getElementById('main').innerHTML = `
+        <h1>Quiz Completed</h1>
+        <p>Name: ${studentName}</p>
+        <p>School: ${schoolName}</p>
+        <p>Score: ${score} / 20</p>
+        <button onclick="window.print()">Print Result</button>
+        <button onclick="location.reload()">Next Student</button>
+      `;
+    }
+  </script>
+</body>
+</html>
