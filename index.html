@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>online quiz</title>
+  <title>Online Quiz</title>
   <link rel="icon" href="icon.avif">
   <style>
     body {
@@ -23,6 +23,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
       width: 80%;
       max-width: 600px;
+      text-align: center;
     }
     input, button {
       width: 100%;
@@ -84,51 +85,112 @@
     let timer;
     let countdown;
     let questions = [];
+    let selectedCategory = "";  // Store chosen category
 
     const quizData = {
       'Invention & Scientists': [
         { question: "Who invented the telephone?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who Developed the theory of relativity?", options: ['Isaac Newton', 'Albert Einstein', 'Galileo Galilei', 'Marie Curie'], answer: 'Albert Einstein' },
-        { question: "Who Developed alternating current (AC) electricity system ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Nikola Tesla' },
-        { question: "Who Developed the theory of relativity ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Albert Einstein' },
-        { question: "Who Discovered the law of gravity and formulated laws of motion ?", options: ['Isaac Newton', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Isaac Newton' },
-        { question: "Who Improved the telescope and supported heliocentric theory ?", options: ['Galileo Galilei', 'Isaac Newton', 'Nikola Tesla', 'Albert Einstein'], answer: 'Galileo Galilei' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
-        { question: "Who invented ?", options: ['Alexander Graham Bell', 'Thomas Edison', 'Nikola Tesla', 'Albert Einstein'], answer: 'Alexander Graham Bell' },
+        { question: "Who developed the theory of relativity?", options: ['Isaac Newton', 'Albert Einstein', 'Galileo Galilei', 'Marie Curie'], answer: 'Albert Einstein' },
+        { question: "Which scientist is credited with inventing the Audion—a vacuum tube that revolutionized radio technology by amplifying electrical signals ?", options: ['Lee de Forest', 'John Ambrose Fleming', 'Galileo Galilei', 'Marie Curie'], answer: 'Lee de Forest' },
+        { question: "Who is most famously known for developing a practical electric light bulb ?", options: ['Isaac Newton', 'Albert Einstein', 'Galileo Galilei', 'Thomas Edison'], answer: 'Thomas Edison' },
+        { question: "Which scientist is associated with the accidental discovery that led to the invention of the microwave oven", options: ['Isaac Newton', 'Percy Spencer', 'Galileo Galilei', 'Marie Curie'], answer: 'Percy Spencer' },
+        { question: "Who discovered the law of gravity?", options: ['Isaac Newton', 'Nikola Tesla', 'Galileo Galilei', 'Marie Curie'], answer: 'Isaac Newton' },
+        { question: "Who is credited with inventing and launching the first liquid-fueled rocket, thus laying the groundwork for modern rocketry ?", options: ['Isaac Newton', 'Robert Goddard', 'Konstantin Tsiolkovsky', 'Marie Curie'], answer: 'Robert Goddard' },
+        { question: "Who discovered the antibiotic penicillin?", options: ['Louis Pasteur', 'Alexander Fleming', 'Galileo Galilei', 'Marie Curie'], answer: 'Alexander Fleming' },
+        { question: "Which inventor—also known for her acting career—co-invented the principle of frequency hopping spread spectrum, a key technology in modern wireless communications ?", options: ['Hedy Lamarr', 'Marie Curie', 'Rosalind Franklin', 'Ada Lovelace'], answer: 'Hedy Lamarr' },
+        { question: "Who are credited with inventing and flying the first successful airplane?", options: ['Nikola Tesla', 'Leonardo da Vinci', 'Galileo Galilei', 'The Wright Brothers'], answer: 'The Wright Brothers' },
+        { question: "Which scientist is credited with developing the industrial process for synthesizing ammonia—a breakthrough that revolutionized agriculture through the Haber-Bosch process?", options: ['Carl Bosch', 'Robert Robinson', 'Justus von Liebig', 'Fritz Haber'], answer: 'Fritz Haber' },
+        { question: "Who formulated the three laws of planetary motion ?", options: ['Johannes Kepler', 'James Watson and Francis Crick', 'Galileo Galilei', 'Charles Darwin'], answer: 'Johannes Kepler' },
+        { question: "Who invented the first practical vacuum tube diode—often referred to as Fleming’s valve—which paved the way for subsequent advances in electronics?", options: ['Lee de Forest', 'Thomas Edison', 'John Ambrose Fleming', 'Marie Curie'], answer: 'Lee de Forest' },
+        { question: "Which scientist is associated with the accidental discovery that led to the invention of the microwave oven ?", options: ['Percy Spencer', 'Nikola Tesla', 'Galileo Galilei', 'Guglielmo Marcon'], answer: 'Albert Einstein' },
+        { question: "Who discovered the electron ?", options: ['James Chadwick', 'J.J. Thomson', 'Paul Nipkow', 'Philo Farnsworth'], answer: 'Paul Nipkow' },
+        { question: "Which inventor created the Nipkow disk, an early mechanical scanning device that was essential to the development of television ?", options: ['Paul Nipkow', 'Philo Farnsworth', 'Galileo Galilei', 'Marie Curie'], answer: 'Paul Nipkow' },
+        { question: "Which scientist is credited with inventing the cyclotron—a type of particle accelerator that has been instrumental in advancing nuclear research ?", options: ['Ernest Lawrence', 'Albert Einstein', 'J. Robert Schrieffer', 'Marie Curie'], answer: 'Ernest Lawrence' },
+        { question: "Which scientist's work led to the formulation of Ohm's Law ?", options: ['Ratha krishnan', 'Visvesh', 'Akash', 'Aditya'], answer: 'Albert Einstein' },
+        { question: "Which scientist is acknowledged for inventing the electron microscope, a device that enabled imaging at atomic resolution?", options: ['Ernst Ruska', 'Niels Bohr', 'Max Planck', 'Marie Curie'], answer: 'Ernst Ruska' },
+        { question: "Who is known as the Missile Man of India and was born in Tamil Nadu ?", options: ['Vikram Sarabha', 'C. V. Raman', 'Homi Bhabha', 'A. P. J. Abdul Kalam'], answer: 'A. P. J. Abdul Kalam' }
+        
+
+     
       ],
       'Physics': [
         { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
-        { question: "What is the speed of light?", options: ['3x10^8 m/s', '3x10^6 m/s', '1x10^8 m/s', '5x10^8 m/s'], answer: '3x10^8 m/s' }
+        { question: "What is the speed of light?", options: ['3x10^8 m/s', '3x10^6 m/s', '1x10^8 m/s', '5x10^8 m/s'], answer: '3x10^8 m/s' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+        { question: "What is the SI unit of force?", options: ['Newton', 'Joule', 'Watt', 'Pascal'], answer: 'Newton' },
+
       ],
       'Chemistry': [
         { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
-        { question: "Who is known as the father of modern chemistry?", options: ['Dmitri Mendeleev', 'Antoine Lavoisier', 'John Dalton', 'Marie Curie'], answer: 'Antoine Lavoisier' }
+        { question: "Who is known as the father of modern chemistry?", options: ['Dmitri Mendeleev', 'Antoine Lavoisier', 'John Dalton', 'Marie Curie'], answer: 'Antoine Lavoisier' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
+        { question: "What is the chemical symbol for water?", options: ['H2O', 'O2', 'CO2', 'HO'], answer: 'H2O' },
       ],
       'Computer Science': [
         { question: "Who is the father of computers?", options: ['Charles Babbage', 'Alan Turing', 'Bill Gates', 'Steve Jobs'], answer: 'Charles Babbage' },
-        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' }
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Computer Processing Unit', 'Central Performance Unit', 'Central Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
+        { question: "What does CPU stand for?", options: ['Central Processing Unit', 'Central Performance Unit', 'Computer Processing Unit', 'Control Process Unit'], answer: 'Central Processing Unit' },
       ]
     };
 
     function showCategories() {
-      studentName = document.getElementById('studentName').value;
-      schoolName = document.getElementById('schoolName').value;
+      studentName = document.getElementById('studentName').value.trim();
+      schoolName = document.getElementById('schoolName').value.trim();
+      
       if (!studentName || !schoolName) {
-        alert('Pls enter ur details');
+        alert('Please enter your details properly.');
         return;
       }
+      
       document.getElementById('main').innerHTML = `
         <h1>Select Quiz Category</h1>
         <div class="categories">
@@ -153,6 +215,7 @@
     }
 
     function startQuiz(category) {
+      selectedCategory = category;  // Store selected category
       questions = quizData[category];
       score = 0;
       currentQuestion = 0;
@@ -160,26 +223,50 @@
       showQuestion();
     }
 
-    function startTimer() {
-      let timeLeft = 60;
-      countdown = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').innerText = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(countdown);
-          showResult();
-        }
-      }, 1000);
+    let count;
+let timeLeft = 60; // Set initial time
+
+function startTimer() {
+  if (countdown) return; // Prevent multiple timers
+
+  countdown = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      updateTimerUI();
+    } else {
+      clearInterval(countdown);
+      showResult(); // Time is up, show result
     }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  let timerElem = document.getElementById('timer');
+  if (timerElem && timeLeft > 0) {
+    timerElem.innerText = `Time Left: ${timeLeft}s`;
+  }
+}
+
+// Call `startTimer()` only once when the category is chosen
+// And ensure `updateTimerUI()` is called properly
+
+
+// Call startTimer() ONLY when the category is chosen
+
+
+// Call startTimer() whenever you move to the next question
+
 
     function showQuestion() {
       if (currentQuestion >= questions.length) {
         showResult();
         return;
       }
+
       let q = questions[currentQuestion];
       document.getElementById('main').innerHTML = `
-        <div class="timer" id="timer">60</div>
+        <h2>Category: ${selectedCategory}</h2>
+        <div class="timer" id="timer">Time Left: 60s</div>
         <h2>${q.question}</h2>
         ${q.options.map(option => `<button onclick="checkAnswer('${option}')">${option}</button>`).join('')}
       `;
@@ -197,9 +284,10 @@
       clearInterval(countdown);
       document.getElementById('main').innerHTML = `
         <h1>Quiz Completed</h1>
-        <p>Name: ${studentName}</p>
-        <p>School: ${schoolName}</p>
-        <p>Score: ${score} / 20</p>
+        <p>Student Name: ${studentName}</p>
+        <p>School Name: ${schoolName}</p>
+        <p>Category: ${selectedCategory}</p>
+        <p>Score: ${score} / ${questions.length}</p>
         <button onclick="window.print()">Print Result</button>
         <button onclick="location.reload()">Next Student</button>
       `;
